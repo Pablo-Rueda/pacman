@@ -19,7 +19,7 @@
   width: 1000px;
   display: -ms-grid;
   display: grid;
-  background-color: lightblue;
+  background-color: lightcoral;
   -ms-grid-columns: (1fr)[24];
       grid-template-columns: repeat(24, 1fr);
   -ms-grid-rows: (1fr)[12];
@@ -36,6 +36,18 @@
   background-color: lightgreen;
 }
 
+.pointsCell {
+  background-color: white;
+  border-radius: 50%;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-column-align: center;
+      justify-self: center;
+  height: 20%;
+  width: 20%;
+}
+
 /* cells */
 .wall {
   background-color: lightslategrey;
@@ -50,7 +62,9 @@
 }
 
 .packman {
-  background-color: yellow;
+  display: block;
+  background: yellow;
+  border-radius: 50%;
 }
 
 @media screen and (max-width: 1000px) {
@@ -66,8 +80,4 @@
     width: 500px;
   }
 }
-
-/*
-@import "./walls";
-*/
 /*# sourceMappingURL=style.css.map */
