@@ -1,0 +1,57 @@
+/* walls */
+.wall{
+    background-color: lightslategrey;
+}
+    /* top-bottom border walls*/
+.rowWall{
+    grid-column-start: 1;
+    grid-column-end: $cellSize*2 +1;
+}
+.rowUpperWall{
+    grid-row-start:1;
+    grid-row-end:2;
+}
+.rowDownerWall{
+    grid-row-start: $cellSize;
+    grid-row-end: $cellSize+1;
+}
+
+    /* left-right border walls*/
+.colLeftWall{
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.colRightWall{
+    grid-column-start: $cellSize*2;
+    grid-column-end: $cellSize*2+1;
+}
+.colUpperWall{
+    grid-row-start: 1;
+    grid-row-end: ($cellSize+1)/2 - 1;
+}
+
+.colDownerWall{
+    grid-row-start: ($cellSize+1)/2 + 1;
+    grid-row-end: $cellSize+1;
+}
+
+/* Exit */
+.exit{
+    background-color: lightgreen;
+    grid-row-start: ($cellSize+1)/2 - 1;
+    grid-row-end: ($cellSize+1)/2 + 1;
+}
+
+
+
+<--
+<div id="" class="wall colLeftWall colUpperWall"></div>
+<div class="wall colLeftWall colDownerWall"></div>
+<div class="wall colRightWall colUpperWall"></div>
+<div class="wall colRightWall colDownerWall"></div>
+<div class="exit colLeftWall"></div>
+<div class="exit colRightWall"></div>
+<div class="wall rowWall rowUpperWall"></div>
+<div class="wall rowWall rowDownerWall"></div>
+-->

@@ -1,0 +1,45 @@
+.playBoard{
+    height: $tableSize;
+    width: $tableSize*$sizeFactor;
+    display: grid;
+    background-color: lightblue;
+    grid-template-columns: repeat( $sizeFactor * $cellSize, 1fr);
+    grid-template-rows: repeat($cellSize, 1fr);
+    border: 2px solid blue;
+}
+
+/* cells */
+.boardCell{
+    background-color: lightcoral;
+}
+.boardCell:hover{
+    background-color: lightgreen;
+}
+
+/* cells */
+.wall{
+    background-color: lightslategrey;
+}
+.exit{
+    background-color: lightgreen;
+}
+.ghost{
+    background-color: lightseagreen;
+}
+.packman{
+    background-color: yellow;
+}
+
+@media screen and (max-width: 1000px) {
+    .playBoard{
+        height: 3*$tableSize/4;
+        width:  $tableSize+$tableSize/2;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .playBoard{
+        height: $tableSize/2;
+        width:  $tableSize;
+    }
+}

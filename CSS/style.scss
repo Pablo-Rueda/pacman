@@ -1,0 +1,16 @@
+$tableSize:500px;
+$cellSize:12;
+$sizeFactor:2;
+
+
+.main{
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+@import "./playTable";
+/*
+@import "./walls";
+*/
