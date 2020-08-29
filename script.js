@@ -1,16 +1,70 @@
 
-/* Ghost object*/
-
+/* Create a Ghosts*/
+function ghost(id,speed,loction){
+        this.type = "Ghost";
+        this.GhostID = id;
+        this.speed = speed;
+        this.loction = loction;
+        this.moveTo = (dir,lction,playboard) => {
+            if(playboard.childNodes[lction + dir].className != "ghost"){
+                if(map[dir + lction] == 0 ){ // empty board cell 
+                    playboard.childNodes[lction + dir].className = this.GhostID; 
+                    playboard.childNodes[lction].className = "boardCell";
+                    this.loction = lction + dir;  
+                }else if (map[dir + lction] == 1){ // pointcell
+                    playboard.childNodes[lction + dir].className = this.GhostID; 
+                    playboard.childNodes[lction].className = "pointsCell";
+                    this.loction = lction + dir;
+                }else if(map[dir + lction] == 3){
+                    playboard.childNodes[lction + dir].className = this.GhostID; 
+                    playboard.childNodes[lction].className = "ghostLair";
+                    this.loction = lction + dir;
+                }else{
+                    this.autoMove();
+                }
+            }
+        };
+        this.autoMove = () => {
+            var playboard = document.getElementById("playBoard");
+            let ind = this.loction;
+            let moveDirection = Math.floor(Math.random()*4+1);
+            switch(moveDirection){
+                case 0: // stop
+                break
+                case 1: // up
+                    this.moveTo(-24,ind,playboard);
+                break
+                case 2: // down
+                    this.moveTo(24,ind,playboard);
+                break
+                case 3: // left
+                if((ind -1) == 119){
+                    this.moveTo(23,ind,playboard);
+                } else{
+                    this.moveTo(-1,ind,playboard);
+                }
+            break
+            case 4: // right
+                if((ind + 1) == 144){
+                    this.moveTo(-23,ind,playboard);
+                } else{
+                    this.moveTo(1,ind,playboard);
+                }
+            break
+            } 
+        };
+    }
 
 /* Pacman object*/
 
 var pacman = {
     type: "pacman",
     moveDirection: 0,
+    loction: 251,
     speed:500,
     autoMove:function(){
-        var playboard = document.getElementById("playBoard");
-        var ind = map.indexOf(4);
+        let playboard = document.getElementById("playBoard");
+        var ind = pacman.loction;
         switch(pacman.moveDirection){
             case 0: // stop
             break
@@ -21,22 +75,17 @@ var pacman = {
                 pacman.moveTo(24,ind,playboard);
             break
             case 3: // left
-                if(ind -1 == 119){
-                    playboard.childNodes[143].className = "pacmanPosition"; 
-                    map[143] = 4; // change map location of pacman
-                    playboard.childNodes[ind].className = "boardCell";
-                    map[ind] = 0;     // remove the empty cell pacman
+                if((ind -1) == 119){
+                    console.log(ind - 1)
+                    pacman.moveTo(23,ind,playboard);
                 } else{
-                pacman.moveTo(-1,ind,playboard);
+                    pacman.moveTo(-1,ind,playboard);
                 }
             break
             case 4: // right
-                console.log("moveDirection");
-                if(ind + 1 == 144){
-                    playboard.childNodes[120].className = "pacmanPosition"; 
-                    map[120] = 4; // change map location of pacman
-                    playboard.childNodes[ind].className = "boardCell";
-                    map[ind] = 0;     // remove the empty cell pacman
+                if((ind + 1) == 144){
+                    console.log(ind + 1)
+                    pacman.moveTo(-23,ind,playboard);
                 } else{
                     pacman.moveTo(1,ind,playboard);
                 }
@@ -44,23 +93,20 @@ var pacman = {
         } 
     },
     moveTo: function(dir,lction,playboard){
-        if(map[dir + lction] == 1){ // wall there
-           // this.moveDirection = 0;
-        }else if (map[dir + lction] == 2){ // ghost lair there
-          //  this.moveDirection = 0;
-        }else if (map[dir + lction] == 3){ // ghost there
-          //  let somethingToHappen;
-        }else if (map[dir + lction] == 4){ // pacman there
-          //  let somethingToHappen;
-        }else{
-            playboard.childNodes[lction + dir].className = "pacmanPosition"; 
-            map[lction+dir] = 4; // change map location of pacman
+        if(map[dir + lction] == 0 ){ // empty board cell 
+            playboard.childNodes[lction + dir].className = "pacmanPosition";
             playboard.childNodes[lction].className = "boardCell";
-            map[lction] = 0;     // remove the empty cell pacman
+            pacman.loction = lction + dir;
+        }else if (map[dir + lction] == 1){ // pointcell
+            playboard.childNodes[lction + dir].className = "pacmanPosition";
+            playboard.childNodes[lction].className = "boardCell";
+            pacman.loction = lction + dir;
+        }else{
+            pacman.moveDirection= 0;
         }
     },
     pressKey: function(keyInp){
-        keyInp = keyInp || window.event;;
+        keyInp = keyInp || window.event;
         switch(keyInp.keyCode){ // Apply move function bassed on keybord input
             case 38: // up arrow
                 pacman.moveDirection = 1;
@@ -85,6 +131,7 @@ var pacman = {
             break
             case 68: // right with D character
                 pacman.moveDirection = 4;
+                
             break
         }
     }
@@ -103,16 +150,16 @@ var map = {
         for (var i = 0; i < this.mapTemplate.length; i++) {  //input the map
             switch(this.mapTemplate[i]){ // Apply move function bassed on keybord input
                 case 0: 
-                    this.inputCell("pointsCell");
+                    this.inputCell("boardCell");
                 break
                 case 1: 
-                    this.inputCell("wall");
+                    this.inputCell("pointsCell");
                 break
                 case 2: 
-                    this.inputCell("ghostLair");
+                    this.inputCell("wall"); 
                 break
                 case 3: 
-                    this.inputCell("ghost");
+                    this.inputCell("ghostLair");
                 break
                 case 4: 
                     this.inputCell("pacmanPosition");
@@ -121,26 +168,55 @@ var map = {
         }
     },
 
-    mapTemplate:   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,// create the map structure 
-                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-                    1,0,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,0,0,1,1,1,0,1,
-                    1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,
-                    1,1,1,0,1,0,1,0,1,1,1,2,1,1,1,0,1,0,0,1,0,1,1,1,
-                    0,0,0,0,1,0,0,0,1,2,2,2,2,2,1,0,0,0,1,1,0,0,0,0,
-                    1,1,1,0,1,0,1,0,1,2,2,2,2,2,1,0,1,0,0,1,0,1,1,1,
-                    1,0,0,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,0,0,0,0,0,1,
-                    1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,
-                    1,0,1,1,1,0,1,1,0,1,0,1,0,1,0,1,1,0,1,1,1,1,0,1,
-                    1,0,0,0,0,0,0,0,0,1,0,4,0,1,0,0,0,0,0,0,0,0,0,1,
-                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    mapTemplate:   [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,// create the map structure
+                    2,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,2,
+                    2,0,2,2,2,1,2,2,1,2,2,2,2,2,1,2,2,1,1,2,2,2,0,2,
+                    2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,2,
+                    2,2,2,1,2,1,2,1,2,2,2,3,2,2,2,1,2,1,1,2,1,2,2,2,
+                    1,1,1,1,2,1,1,1,2,3,3,3,3,3,2,1,1,1,2,2,1,1,1,1,
+                    2,2,2,1,2,1,2,1,2,3,3,3,3,3,2,1,2,1,1,2,1,2,2,2,
+                    2,1,1,1,1,1,2,1,2,2,2,2,2,2,2,1,2,2,1,1,1,1,1,2,
+                    2,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,2,
+                    2,0,2,2,2,1,2,2,1,2,0,2,0,2,1,2,2,1,2,2,2,2,0,2,
+                    2,0,0,1,1,1,1,1,1,2,0,0,0,2,1,1,1,1,1,1,1,0,0,2,
+                    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 } 
 
-/* Commands*/
-map.createMap();
-document.onkeydown = pacman.pressKey;   /* Pacman moves */
 
+
+
+/* Creating setting */
+map.createMap(); // create map
+ghosts =[ // create mobs
+    new ghost("ghost",500,131),
+    new ghost("ghost",450,132),
+    new ghost("ghost",300,153),
+    new ghost("ghost",250,157),
+]
+
+document.getElementById("playBoard").childNodes[251].className = "pacmanPosition"; // add packman to map
+for(var i = 0; i< ghosts.length; i++){ // add ghosts to map
+    document.getElementById("playBoard").childNodes[ghosts[i].loction].className = ghosts[i].GhostID;
+}
+
+/* Movement */
+document.onkeydown = pacman.pressKey;  // Pacman moves 
 setInterval(pacman.autoMove, pacman.speed);
 
+for(var i = 0; i< ghosts.length; i++){ // Ghosts moves
+    setInterval(ghosts[i].autoMove,  ghosts[i].speed);
+}
+
+
+
+
+
+
+
+
+
+
+    
 
 /*  Move Overlay
 function checkKey(keyInp) {
