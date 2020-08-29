@@ -30,6 +30,7 @@
 /* cells */
 .boardCell {
   background-color: lightcoral;
+  z-index: 1;
 }
 
 .boardCell:hover {
@@ -46,25 +47,18 @@
       justify-self: center;
   height: 20%;
   width: 20%;
+  z-index: 1;
 }
 
-/* cells */
+/* Base cells */
 .wall {
   background-color: lightslategrey;
+  z-index: 2;
 }
 
-.exit {
-  background-color: lightgreen;
-}
-
-.ghost {
-  background-color: lightseagreen;
-}
-
-.packman {
-  display: block;
-  background: yellow;
-  border-radius: 50%;
+.ghostLair {
+  background-color: lightcoral;
+  z-index: 1;
 }
 
 @media screen and (max-width: 1000px) {
@@ -79,5 +73,22 @@
     height: 250px;
     width: 500px;
   }
+}
+
+.ghost {
+  background-color: lightseagreen;
+  border: 1px solid lightgrey;
+  border-radius: 50% 50% 0% 0%;
+}
+
+.pacmanPosition {
+  display: block;
+  background: yellow;
+  border: 1px solid lightgrey;
+  border-radius: 50%;
+  /*
+    height: ($tableSize/$nCells)-($tableSize/$nCells)/10;
+    width:($tableSize/$nCells)-($tableSize/$nCells)/10; 
+    */
 }
 /*# sourceMappingURL=style.css.map */
