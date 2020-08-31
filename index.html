@@ -5,9 +5,24 @@
         <link rel="stylesheet" href="CSS/style.css">
     </head>
     <body>
+        <nav class="main-nav">
+            <h1 >Vanilla JS Pacman</h1>
+            <div class="nav-info">
+                <h1 >Points:</h1> 
+                <h1 id="points"></h1>
+            </div>
+            <div class="nav-buttons">
+                <button id="play" onclick="game.play()"> Play</button>
+                <button id="pause" onclick="game.pause()">Pause</button>
+                <button id="reset" onclick="game.reset()">Reset</button>
+            </div>
+        </nav>
+
         <div class="main">
-            <h1>Vanilla JS pacman</h1>
             <div id="playBoard" class="playBoard"></div>
+            <div id="stop" class="message"> On Pause</div>
+            <div id="win" class="message"> You Win!</div>
+            <div id="lose" class="message"> Game Over!</div>
         </div>
     <script src="script.js"></script>
     </body>

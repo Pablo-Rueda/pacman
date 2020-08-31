@@ -2,7 +2,11 @@ $tableSize:500px;
 $nCells:12;
 $sizeFactor:2;
 
-
+body{
+    left:0;
+    margin-left: 0;
+    padding:0;
+}
 .main{
 display: flex;
 flex-direction: column;
@@ -12,3 +16,5 @@ align-items: center;
 
 @import "./playTable";
 @import "./creatures";
+@import "./navBar";
+@import "./messages";
