@@ -1,5 +1,6 @@
 .playBoard{
-    margin-top:75px;
+    margin-top:30px;
+    margin-bottom:30px;
     height: $tableSize;
     width: $tableSize*$sizeFactor;
     display: grid;
@@ -13,9 +14,6 @@
 .boardCell{
     background-color: lightcoral;
     z-index: 1;
-}
-.boardCell:hover{
-    background-color: lightgreen;
 }
 
 .pointsCell{

@@ -1,169 +1,152 @@
-////////////////////
-/* Create a Ghosts*/
-////////////////////
-function ghost(id,speed,loction){
-        this.type = "Ghost";
-        this.GhostID = id;
-        this.speed = speed;
-        this.initialLocation = loction;
-        this.loction = loction;
-        this.moveTo = (dir,lction,playboard) => {
-            if(playboard.childNodes[lction + dir].className == "pacmanPosition"){
-                document.getElementById("lose").style.display = "block";
-                game.playing = 0;
-                pacman.loction = -1;
-
-            }else if(playboard.childNodes[lction + dir].className != "ghost" && playboard.childNodes[lction + dir].className != "wall"){
-                switch(map[lction]){
-                    case 0: // empty
-                        playboard.childNodes[lction + dir].className = this.GhostID; 
-                        playboard.childNodes[lction].className = "boardCell";
-                        this.loction = lction + dir;
-                    break
-                    case 1: // point
-                        playboard.childNodes[lction + dir].className = this.GhostID; 
-                        playboard.childNodes[lction].className = "pointsCell";
-                        this.loction = lction + dir;
-                    break
-                    case 3: // ghostlair
-                        playboard.childNodes[lction + dir].className = this.GhostID; 
-                        playboard.childNodes[lction].className = "ghostLair";
-                        this.loction = lction + dir;
-                    break
-                }
-            }
-        };
-        this.autoMove = () => {
-            if(game.playing == 1){
-                var playboard = document.getElementById("playBoard");
-                let ind = this.loction;
-                let moveDirection = Math.floor(Math.random()*4+1);
-                switch(moveDirection){
-                    case 0: // stop
-                    break
-                    case 1: // up
-                        this.moveTo(-24,ind,playboard);
-                    break
-                    case 2: // down
-                        this.moveTo(24,ind,playboard);
-                    break
-                    case 3: // left
-                    if((ind -1) == 119){
-                        this.moveTo(23,ind,playboard);
-                    } else{
-                        this.moveTo(-1,ind,playboard);
-                    }
-                break
-                case 4: // right
-                    if((ind + 1) == 144){
-                        this.moveTo(-23,ind,playboard);
-                    } else{
-                        this.moveTo(1,ind,playboard);
-                    }
-                break
-                }
-            }
-        };
+///////////////////////////////////////////
+/* Cretures  prototype  */
+///////////////////////////////////////////
+function Creature(type,speed,initialLocation){ // initialize a base object with common properties
+    this.type = type;
+    this.speed = speed;
+    this.initialLocation = initialLocation;
+    this.currentLocation = initialLocation;
+    this.moveDirection = 0;
 }
-//////////////////
-/* Pacman object*/
-//////////////////
-var pacman = {
-    type: "pacman",
-    moveDirection: 0,
-    loction: 251,
-    speed:250,
-    autoMove:function(){
-        if(game.playing == 1){
-            let playboard = document.getElementById("playBoard");
-            var ind = pacman.loction;
-            switch(pacman.moveDirection){
-                case 0: // stop
-                break
-                case 1: // up
-                    pacman.moveTo(-24,ind,playboard);
-                break
-                case 2: // down
-                    pacman.moveTo(24,ind,playboard);
-                break
-                case 3: // left
-                    if((ind -1) == 119){ // border move
-                        pacman.moveTo(23,ind,playboard);
-                    } else{
-                        pacman.moveTo(-1,ind,playboard);
-                    }
-                break
-                case 4: // right
-                    if((ind + 1) == 144){ // border move
-                        pacman.moveTo(-23,ind,playboard);
-                    } else{
-                        pacman.moveTo(1,ind,playboard);
-                    }
-                break
-            }
-            var countCells = 0;
-            for(var i = 0; i < map.length; ++i){
-                if(map[i] == 1)
-                    countCells++;
-            }
-            if(countCells == 0){
-                document.getElementById("win").style.display = "block";
-                game.playing = 0;
-                pacman.loction = -1;
-            }
-        }
-    },
-    moveTo: function(dir,lction,playboard){
-        if( playboard.childNodes[lction + dir].className == "ghost"){
-            document.getElementById("lose").style.display = "block";
-            game.playing = 0;
-            pacman.loction = -1;
-        }else{
-            if(map[dir + lction] == 0 ){ // empty board cell 
-                playboard.childNodes[lction + dir].className = "pacmanPosition";
-                playboard.childNodes[lction].className = "boardCell";
-                pacman.loction = lction + dir;
-            }else if (map[dir + lction] == 1){ // pointcell
-                game.points = game.points +10;
-                playboard.childNodes[lction + dir].className = "pacmanPosition";
-                playboard.childNodes[lction].className = "boardCell";
-                map[dir + lction] = 0;
-                pacman.loction = lction + dir;
-            }else{
-                pacman.moveDirection= 0;
-            }
-        }
-    },
-    pressKey: function(keyInp){
-        keyInp = keyInp || window.event;
-        switch(keyInp.keyCode){ // Apply move function bassed on keybord input
-            case 38: // up arrow
-                pacman.moveDirection = 1;
+Creature.prototype.move = function(gameState){
+    if(gameState == 1){
+        switch(this.moveDirection){
+            case 0: // stop
             break
-            case 87: // up  W character
-                pacman.moveDirection = 1;
+            case 1: // up
+                this.changeCell(-24);
             break
-            case 40: //  down arrow
-                pacman.moveDirection = 2;
+            case 2: // down
+                this.changeCell(24);
             break
-            case 83: // down  S character
-                pacman.moveDirection = 2;
+            case 3: // left
+                if((this.currentLocation -1) == 119){
+                    this.changeCell(23);
+                } else{
+                    this.changeCell(-1);
+                }
             break
-            case 37: // left arrow
-                pacman.moveDirection = 3;
-            break
-            case 65: // left A character
-                pacman.moveDirection = 3;
-            break
-            case 39: // right arrow
-                pacman.moveDirection = 4;
-            break
-            case 68: // right with D character
-                pacman.moveDirection = 4;
+            case 4: // right
+                if((this.currentLocation + 1) == 144){
+                    this.changeCell(-23);
+                } else{
+                    this.changeCell(1);
+                }
             break
         }
     }
-} 
+};
+
+Creature.prototype.changeCell = function(cellDirection){ 
+    let playboard = document.getElementById("playBoard");
+    if( (this.type == "pacman" && playboard.childNodes[this.currentLocation + cellDirection].className == "ghost")|| // if pacman moves to ghost, lose
+        (this.type == "ghost" && playboard.childNodes[this.currentLocation + cellDirection].className == "pacman")){ //  or if ghost moves to pacman
+        document.getElementById("lose").style.display = "block";
+        delete pacman;
+        game.playing = 0;
+        game.condition = 0;
+        
+    }else if(playboard.childNodes[cellDirection + this.currentLocation].className != "ghost" && //not moving to a ghost
+     playboard.childNodes[cellDirection + this.currentLocation].className != "wall"){ //not moving to a wall
+        switch(map[this.currentLocation]){
+            case 0: // empty cell
+                playboard.childNodes[cellDirection + this.currentLocation].className = this.type;  //change next cell class to type
+                playboard.childNodes[this.currentLocation].className = "boardCell"; //change current cell to empty one
+                this.currentLocation = cellDirection + this.currentLocation; //overwrite current location
+            break
+            case 1: // point cell
+                if(this.type=="pacman"){ 
+                    playboard.childNodes[this.currentLocation].className = "boardCell";
+                    map[this.currentLocation] = 0;
+                    game.points = game.points + 10;
+                    //check if we win:
+                    var countCells = 0;
+                    for(var i = 0; i < map.length; ++i){
+                        if(map[i] == 1)
+                            countCells++;
+                    }
+                    if(countCells == 0){
+                        document.getElementById("win").style.display = "block";
+                        delete pacman;
+                        game.playing = 0;
+                        game.condition = 0;
+                    }
+                }else{
+                    playboard.childNodes[this.currentLocation].className = "pointsCell"; 
+                }
+                playboard.childNodes[cellDirection + this.currentLocation].className = this.type;
+                this.currentLocation = cellDirection + this.currentLocation;
+            break
+            case 3: // ghostlair cell,
+            if(this.type!="pacman"){ 
+                playboard.childNodes[cellDirection + this.currentLocation].className = this.type;
+                playboard.childNodes[this.currentLocation].className = "ghostLair"; 
+                this.currentLocation = cellDirection + this.currentLocation; 
+            }
+            break
+        }
+    }
+}
+
+
+//////////////////
+/* Ghost object*/
+//////////////////
+function Ghost(...args){ // inherit the properties from creture
+    Creature.apply(this, args); 
+}
+Ghost.prototype = Object.create(Creature.prototype); // inherit the methods from creture
+Ghost.prototype.setMoveDirection = function(){
+    this.moveDirection = Math.floor(Math.random()*4+1)
+};
+
+//////////////////
+/* Pacman object*/
+//////////////////
+function Pacman(...args){ // inherit the properties from creture
+    Creature.apply(this, args); 
+}
+Pacman.prototype = Object.create(Creature.prototype); // inherit the methods from creture
+//Pacman.prototype.setMoveDirection = function(){
+//    this.moveDirection = Math.floor(Math.random()*4+1);
+
+
+Pacman.prototype.setMoveDirection = function(input){     // must be an argument from 1 to 4
+    if(input == 1 || input == 2 || input == 3 || input == 4 ){ // if button input, return it
+        direction = input;
+    }else{
+        input = input || window.event;
+        switch(input.keyCode){ // Apply move function bassed on keybord input
+            case 38: // up arrow
+                direction = 1;
+            break
+            case 87: // up  W character
+                direction = 1;
+            break
+            case 40: //  down arrow
+                direction = 2;
+            break
+            case 83: // down  S character
+                direction = 2;
+            break
+            case 37: // left arrow
+                direction = 3;
+            break
+            case 65: // left A character
+                direction = 3;
+            break
+            case 39: // right arrow
+                direction = 4;
+            break
+            case 68: // right with D character
+                direction = 4;
+            break
+        }
+    }
+    pacman.moveDirection = direction;
+}
+
+
 //////////////////////////
 /* Create the playboard */
 //////////////////////////
@@ -240,25 +223,33 @@ var game = {
 //////////////////////////
 mapCreate.createMap(); // create map
 var map = mapCreate.mapTemplate;
-ghosts =[ // create mobs
-    new ghost("ghost",250,131),
-    new ghost("ghost",300,132),
-    new ghost("ghost",350,153),
-    new ghost("ghost",200,157),
-]
 
-document.getElementById("playBoard").childNodes[251].className = "pacmanPosition"; // add packman to map
+pacman = new Pacman("pacman",250,251); // create pacman
+ghosts =[ // create ghosts
+    new Ghost("ghost",250,131),
+    new Ghost("ghost",300,132),
+    new Ghost("ghost",350,153),
+    new Ghost("ghost",200,157),
+];
+
+document.getElementById("playBoard").childNodes[251].className = "pacman"; // add packman to map
 for(var i = 0; i< ghosts.length; i++){ // add ghosts to map
-    document.getElementById("playBoard").childNodes[ghosts[i].loction].className = ghosts[i].GhostID;
+    document.getElementById("playBoard").childNodes[ghosts[i].initialLocation].className = ghosts[i].type;
 }
 
 //////////////////////
 /* Moving Creatures */
 //////////////////////
-document.onkeydown = pacman.pressKey;  // Pacman key press 
-setInterval(pacman.autoMove, pacman.speed); // move packman
-setInterval(game.displayPoints, pacman.speed); // update points 
+document.onkeydown = pacman.setMoveDirection;  // Pacman key press 
+setInterval(function(){pacman.move(game.playing);}, pacman.speed); // move packman
+
 for(var i = 0; i< ghosts.length; i++){ // Ghosts moves
-    setInterval(ghosts[i].autoMove,  ghosts[i].speed);
+    setInterval(
+        function(j){
+            return function(){
+                ghosts[j].setMoveDirection();
+                ghosts[j].move(game.playing);};
+        }(i),ghosts[i].speed)
 }
 
+setInterval(game.displayPoints, pacman.speed); // update points 
